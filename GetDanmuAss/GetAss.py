@@ -372,10 +372,17 @@ def GetSign(params,appkey,AppSecret=None):
 def GetDanmuku(cid):
     cid = getint(cid);
     url = "http://comment.bilibili.cn/%d.xml"%(cid);
-    content = zlib.decompressobj(-zlib.MAX_WBITS).decompress(getURLContent(url))
+    # content = zlib.decompressobj(-zlib.MAX_WBITS).decompress()
 #    content = GetRE(content,r'<d p=[^>]*>([^<]*)<')
-    return content;
+    return getURLContent(url);
 
+def Decompress(content):
+    result = ""
+    try:
+        result = zlib.decompressobj(-zlib.MAX_WBITS).decompress(content)
+    except:
+        print("decompress error")
+    return result
 
 #def FilterBadChars(f):
 #    s = f.read()
@@ -460,11 +467,15 @@ if __name__ == '__main__':
     else:
         appkey = "03fc8eb101b091fb"
         url = sys.argv[1]
-        regex = re.compile('https:/*[^/]+/video/av(\\d+)(/|/index.html|/index_(\\d+).html)?(\\?|#|$)')
-        regex_match = regex.match(url)
-        if not regex_match:
-            raise ValueError('Invalid URL: %s' % url)
-        aid = regex_match.group(1)
-        pid = regex_match.group(3) or '1'
+        aid, pid = ParseUrlInfo(url)
+
+        with open('danmu.raw', 'r') as f:
+            content = f.read()
+            print(Decompress(content))
         video = GetVideoInfo(aid,appkey,AppSecret=None,page = pid)
-        Danmaku2ASS(GetDanmuku(video.cid),r'%s/Desktop/%s-%s.ass'%(os.path.expanduser('~'),video.title,pid), 640, 360, 0, 'sans-serif', 15, 0.5, 10, False)
+        with open('tmp.txt', 'w') as f:
+            video.saveToFile(f)
+        with open('danmu.raw', 'w') as f:
+            f.write(GetDanmuku(video.cid))
+        # print(video)
+        # Danmaku2ASS(GetDanmuku(video.cid),r'%s/Desktop/bilibili/%s-%s.ass'%(os.path.expanduser('~'),video.title,pid), 640, 360, 0, 'sans-serif', 15, 0.5, 10, False)

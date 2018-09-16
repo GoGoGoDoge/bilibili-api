@@ -44,7 +44,7 @@ class User():
     place = None;#所在地
     description = None;#认证用户为认证信息 普通用户为交友宣言
     followlist = None;#关注的好友列表
-    
+
 
 class Video():
     def __init__(self,m_aid=None,m_title=None):
@@ -52,9 +52,11 @@ class Video():
             self.aid = m_aid;
         if m_title:
             self.title = m_title;
+    def __str__(self):
+        return str(self.aid) + "," + str(self.title) + "," + str(self.guankan) + "," + str(self.shoucang) + "," + str(self.danmu) + "," + str(self.date) + "," + str(self.cover)
 #   写到文件中
     def saveToFile(self,fid):
-        fid.write('av号:%d\n'%self.aid);
+        fid.write('av号:%s\n'%str(self.aid));
         fid.write('标题:%s\n'%self.title);
         fid.write('观看:%d\n'%self.guankan);
         fid.write('收藏:%d\n'%self.shoucang);
@@ -85,7 +87,7 @@ class Video():
     subtitle = None;
     duration = None;
     episode = None;
-#不明：    
+#不明：
     tid = None;
     typename = None;
     instant_server = None;
@@ -95,7 +97,7 @@ class Video():
     play_site = None;
     play_forward = None;
     play_mobile = None;
-    
+
 class Bangumi():
     def __init__(self):
         pass;
@@ -116,7 +118,7 @@ class Bangumi():
     mcover = None;
     click = None;
     season_id = None;
-    
+
 class Comment():
     def __init__(self):
         self.post_user = User();

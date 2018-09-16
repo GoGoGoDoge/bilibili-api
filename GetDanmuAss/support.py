@@ -8,17 +8,17 @@ import urllib2
 import re
 import json
 import zlib
-from biclass import * 
+from biclass import *
 import time
 def GetRE(content,regexp):
     return re.findall(regexp, content)
 
 def getURLContent(url):
-    while True:    	
+    while True:
         flag = 1;
         try:
             headers = {'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
-            req = urllib2.Request(url = url,headers = headers);   
+            req = urllib2.Request(url = url,headers = headers);
             content = urllib2.urlopen(req).read();
         except:
         	flag = 0;
@@ -26,7 +26,7 @@ def getURLContent(url):
         if flag == 1:
         	break;
     return content;
-    
+
 #def FromJson(url):
 #    return json.loads(getURLContent(url))
 
@@ -99,3 +99,14 @@ def GetVideoFromRate(content):
         video_t.author = User(info7[i][0],info7[i][1])
         videoList.append(video_t);
     return videoList
+
+def ParseUrlInfo(url):
+    # regex = re.compile('https:/*[^/]+/video/av(\\d+)(/|/index.html|/index_(\\d+).html)?(\\?|#|$)')
+    regex = re.compile('https:/*[^/]+/video/av(\\d+)(/|/index.html|/index_(\\d+).html)?(\\?p=(\\d+)|#|$|)')
+    regex_match = regex.match(url)
+    if not regex_match:
+        raise ValueError('Invalid URL: %s' % url)
+    aid = regex_match.group(1)
+    pid = regex_match.group(5) or '1'
+    return aid, pid
+
